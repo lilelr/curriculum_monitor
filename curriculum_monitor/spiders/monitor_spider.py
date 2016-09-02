@@ -34,7 +34,7 @@ class MonitorSpider(scrapy.Spider):
     def start_requests(self):
         return [Request("http://sep.ucas.ac.cn/slogin", meta={'cookiejar': 1}, callback=self.post_login)]
 
-        # FormRequeset出问题了
+        # FormRequeset
 
     def post_login(self, response):
         print 'Preparing login'
@@ -82,10 +82,34 @@ class MonitorSpider(scrapy.Spider):
 
     def curriculum_home(self, response):
         print "curriculum_home: " + response.url
-        content = response.xpath('//div[@class="bn-info"]').extract()
-        print content
-        print "succeed"
+        # content = response.xpath('//div[@class="bn-info"]').extract()
+        # print content
+        # print "succeed"
 
+        yield scrapy.Request("http://jwxk.ucas.ac.cn/courseManage/main",
+                             cookies={"route": "7b8af2c81cb5eb409ef57d5bf81b68bd",
+                                      "JSESSIONID": "8197A6EB451D8DA5A6D980B269E64B76",
+                                      'sepuser': '"bWlkPWY3ZWZjMjcyLTlhNmYtNDIxYS1iMTcyLTVjZTcwZjExNmZlZQ==  "'},
+                             # meta={'cookiejar': response.meta['cookiejar']},
+                             headers=self.headers,
+                             callback=self.course_manage_main_request,
+                             dont_filter=True
+                             )
+
+    def course_manage_main_request(self, response):
+        return [Request("http://jwxk.ucas.ac.cn/courseManage/selectCourse",
+                        callback=self.course_manage_main)]
+
+    def course_manage_main(self, response):
+        return [FormRequest.from_response(response,
+                                          headers=self.headers,  # 注意此处的headers
+                                          formdata={
+                                              'deptIds': '951',
+                                              'sb': '0'
+                                          },
+                                          callback=self.parse,
+                                          dont_filter=True
+                                          )]
 
     def parse(self, response):
         print "parse: " + response.url
