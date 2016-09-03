@@ -13,6 +13,15 @@ import re
 from curriculum_monitor.items import CurriculumMonitorItem
 
 
+def format_words(buf, param=0):
+    # 去除字符串buf前后空白字符
+    # 当param > 0时，还将去除字符串内部所有换行符
+    buf = buf.strip()
+    if param > 0:
+        buf = buf.replace('\r', '').replace('\n', '')
+    return buf
+
+
 class MonitorSpider(scrapy.Spider):
     name = "monitor"
     allowed_domains = ["ucas.ac.cn"]
@@ -72,7 +81,7 @@ class MonitorSpider(scrapy.Spider):
         # print response.meta['cookiejar']
         yield scrapy.Request("http://jwxk.ucas.ac.cn/main",
                              cookies={"route": "11d66bd81470cf8d05a0e237dde4c51e",
-                                      "JSESSIONID": "057AB435FC8025E830DE54F40B2D8A9C",
+                                      "JSESSIONID": "D779C723FE5AC5E9D352F4A84CACE36C",
                                       'sepuser': '"bWlkPWM4MGYwMDliLWI2ODAtNDZkYi05ZTIzLWQ5N2NjZGE1N2NiMw==  "'},
                              # meta={'cookiejar': response.meta['cookiejar']},
                              headers=self.headers,
@@ -88,7 +97,7 @@ class MonitorSpider(scrapy.Spider):
         # get 请求
         yield scrapy.Request("http://jwxk.ucas.ac.cn/courseManage/main",
                              cookies={"route": "11d66bd81470cf8d05a0e237dde4c51e",
-                                      "JSESSIONID": "057AB435FC8025E830DE54F40B2D8A9C",
+                                      "JSESSIONID": "D779C723FE5AC5E9D352F4A84CACE36C",
                                       'sepuser': '"bWlkPWM4MGYwMDliLWI2ODAtNDZkYi05ZTIzLWQ5N2NjZGE1N2NiMw==  "'},
                              # meta={'cookiejar': response.meta['cookiejar']},
                              headers=self.headers,
@@ -99,7 +108,7 @@ class MonitorSpider(scrapy.Spider):
     def course_manage_main_request(self, response):
         print "course_manage_main_request: " + response.url
         return [
-            FormRequest(url="http://jwxk.ucas.ac.cn/courseManage/selectCourse?s=673384f6-b56b-43c5-9299-252fd1293ace",
+            FormRequest(url="http://jwxk.ucas.ac.cn/courseManage/selectCourse?s=6014582c-de59-45ca-9e01-7ca4e8696966",
                         headers=self.headers,  # 注意此处的headers
                         formdata={
                             'deptIds': '951',
@@ -109,28 +118,28 @@ class MonitorSpider(scrapy.Spider):
                         dont_filter=True
                         )]
 
-    # def course_manage_main(self, response):
-    #     return [FormRequest.from_response(response,
-    #                                       headers=self.headers,  # 注意此处的headers
-    #                                       formdata={
-    #                                           'deptIds': '951',
-    #                                           'sb': '0'
-    #                                       },
-    #                                       callback=self.parse,
-    #                                       dont_filter=True
-    #                                       )]
-
     def parse(self, response):
-        print "parse: " + response.url
-        code = response.xpath("//div[@class='mc-body']/form[@id='regfrm']//td[3]/a/span[@id='courseCode_125725']/text()").extract()[0]
-        print code
+        # print "parse: " + response.url
+        # code = response.xpath("//span[@id='courseCode_125725']/text()").extract()[0]
+        # print code
+        # 课程代码
         curriculum_code = response.xpath(
-            "//div[@class='mc-body']/form[@id='regfrm']//td[3]/a/span[@id='courseCode_125725']/text()").extract()[0]
-        print curriculum_code
-        restrict = response.xpath("//div[@class='mc-body']/form[@id='regfrm']//td[7]/text()").extract()[0]
-        print restrict
-        students = response.xpath("//div[@class='mc-body']/form[@id='regfrm']//td[8]/text()").extract()[0]
-        print students
+            "//div[@class='mc-body']/form[@id='regfrm']//tr[6]/td[3]/a/span/text()").extract()[0]
+        print "curriculum_code: " + curriculum_code
+        # 课程名称
+        curriculum_name = response.xpath("//div[@class='mc-body']/form[@id='regfrm']//tr[6]/td[4]/a/text()").extract()[
+            0]
+        print "curriculum_name: " + curriculum_name
+        # 课程选课限制人数
+        restrict = response.xpath("//div[@class='mc-body']/form[@id='regfrm']//tr[6]/td[7]/text()").extract()[0]
+        print "restrict:  " + restrict
+        # for each_item in restrict:
+        #     print str("eachItem+" + each_item)
+        #     each_item = format_words(each_item, 1)
+        #     print str(each_item)
+        # 目前课程已选人数
+        students = response.xpath("//div[@class='mc-body']/form[@id='regfrm']//tr[6]/td[8]/text()").extract()[0]
+        print "number: " + students
         print "succeed"
 
         # for sel in response.xpath('//ul/li'):
