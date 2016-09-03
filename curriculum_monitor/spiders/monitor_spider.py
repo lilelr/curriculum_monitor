@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import time
+import sys
 import datetime
 import pymongo
 
@@ -38,6 +39,10 @@ class MonitorSpider(scrapy.Spider):
         "Content-Type": " application/x-www-form-urlencoded; charset=UTF-8",
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36",
     }
+
+    def __init__(self):
+        reload(sys)
+        sys.setdefaultencoding('utf-8')
 
     # 重写了爬虫类的方法, 实现了自定义请求, 运行成功后会调用callback回调函数
 
@@ -133,6 +138,7 @@ class MonitorSpider(scrapy.Spider):
         print "curriculum_name: " + curriculum_name
         # 课程选课限制人数
         restrict = response.xpath("//div[@class='mc-body']/form[@id='regfrm']//tr[6]/td[7]/text()").extract()[0]
+
         print "restrict:  " + restrict
         # for each_item in restrict:
         #     print str("eachItem+" + each_item)
@@ -141,14 +147,31 @@ class MonitorSpider(scrapy.Spider):
         # 目前课程已选人数
         students = response.xpath("//div[@class='mc-body']/form[@id='regfrm']//tr[6]/td[8]/text()").extract()[0]
         print "number: " + students
-        content = u"课程代码:"+curriculum_code+"\n" + u"课程名称:"+curriculum_name+"\n" \
-                  + u"课程选课限制人数:"+restrict+"\n" + u"目前课程已选人数: "+ students+"\n"
-        easygui.msgbox(content, 'curriculum_monitor')
-        # print "succeed"
+        # 开课老师
+        teacher = response.xpath("//div[@class='mc-body']/form[@id='regfrm']//tr[6]/td[12]/a/text()").extract()[0]
+        print teacher
+        current_time = time.strftime(u'%Y年-%m月-%d日-%H时-%M分', time.localtime(time.time()))
+        # print current_time
 
-        # for sel in response.xpath('//ul/li'):
-        #     item = CurriculumMonitorItem()
-        #     item['title'] = sel.xpath('a/text()').extract()
-        #     item['link'] = sel.xpath('a/@href').extract()
-        #     item['desc'] = sel.xpath('text()').extract()
-        #     yield item
+        content = current_time + "\n" \
+                                 u"课程代码:" + curriculum_code + "\n" + u"课程名称:" + curriculum_name + "\n" \
+                  + u"课程选课限制人数:" + restrict + "\n" + u"目前课程已选人数: " + students + "\n" \
+                  + u"开课老师: " + teacher + "\n"
+
+        restrict = int(restrict)
+        students = int(students)
+
+        if students < restrict:
+            easygui.msgbox(u"算法课有空缺位置了,亲!" + "\n" + content, 'curriculum_monitor')
+        else:
+            easygui.msgbox(u"目前," + teacher + u"开的算法课选课人数已满." + "\n" + content, 'curriculum_monitor')
+
+
+            # print "succeed"
+
+            # for sel in response.xpath('//ul/li'):
+            #     item = CurriculumMonitorItem()
+            #     item['title'] = sel.xpath('a/text()').extract()
+            #     item['link'] = sel.xpath('a/@href').extract()
+            #     item['desc'] = sel.xpath('text()').extract()
+            #     yield item
