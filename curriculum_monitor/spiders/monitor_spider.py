@@ -71,9 +71,9 @@ class MonitorSpider(scrapy.Spider):
         print "curriculum_login: " + response.url
         # print response.meta['cookiejar']
         yield scrapy.Request("http://jwxk.ucas.ac.cn/main",
-                             cookies={"route": "7b8af2c81cb5eb409ef57d5bf81b68bd",
-                                      "JSESSIONID": "8197A6EB451D8DA5A6D980B269E64B76",
-                                      'sepuser': '"bWlkPWY3ZWZjMjcyLTlhNmYtNDIxYS1iMTcyLTVjZTcwZjExNmZlZQ==  "'},
+                             cookies={"route": "11d66bd81470cf8d05a0e237dde4c51e",
+                                      "JSESSIONID": "057AB435FC8025E830DE54F40B2D8A9C",
+                                      'sepuser': '"bWlkPWM4MGYwMDliLWI2ODAtNDZkYi05ZTIzLWQ5N2NjZGE1N2NiMw==  "'},
                              # meta={'cookiejar': response.meta['cookiejar']},
                              headers=self.headers,
                              callback=self.curriculum_home,
@@ -85,11 +85,11 @@ class MonitorSpider(scrapy.Spider):
         # content = response.xpath('//div[@class="bn-info"]').extract()
         # print content
         # print "succeed"
-
+        # get 请求
         yield scrapy.Request("http://jwxk.ucas.ac.cn/courseManage/main",
-                             cookies={"route": "7b8af2c81cb5eb409ef57d5bf81b68bd",
-                                      "JSESSIONID": "8197A6EB451D8DA5A6D980B269E64B76",
-                                      'sepuser': '"bWlkPWY3ZWZjMjcyLTlhNmYtNDIxYS1iMTcyLTVjZTcwZjExNmZlZQ==  "'},
+                             cookies={"route": "11d66bd81470cf8d05a0e237dde4c51e",
+                                      "JSESSIONID": "057AB435FC8025E830DE54F40B2D8A9C",
+                                      'sepuser': '"bWlkPWM4MGYwMDliLWI2ODAtNDZkYi05ZTIzLWQ5N2NjZGE1N2NiMw==  "'},
                              # meta={'cookiejar': response.meta['cookiejar']},
                              headers=self.headers,
                              callback=self.course_manage_main_request,
@@ -97,23 +97,42 @@ class MonitorSpider(scrapy.Spider):
                              )
 
     def course_manage_main_request(self, response):
-        return [Request("http://jwxk.ucas.ac.cn/courseManage/selectCourse",
-                        callback=self.course_manage_main)]
+        print "course_manage_main_request: " + response.url
+        return [
+            FormRequest(url="http://jwxk.ucas.ac.cn/courseManage/selectCourse?s=673384f6-b56b-43c5-9299-252fd1293ace",
+                        headers=self.headers,  # 注意此处的headers
+                        formdata={
+                            'deptIds': '951',
+                            'sb': '0'
+                        },
+                        callback=self.parse,
+                        dont_filter=True
+                        )]
 
-    def course_manage_main(self, response):
-        return [FormRequest.from_response(response,
-                                          headers=self.headers,  # 注意此处的headers
-                                          formdata={
-                                              'deptIds': '951',
-                                              'sb': '0'
-                                          },
-                                          callback=self.parse,
-                                          dont_filter=True
-                                          )]
+    # def course_manage_main(self, response):
+    #     return [FormRequest.from_response(response,
+    #                                       headers=self.headers,  # 注意此处的headers
+    #                                       formdata={
+    #                                           'deptIds': '951',
+    #                                           'sb': '0'
+    #                                       },
+    #                                       callback=self.parse,
+    #                                       dont_filter=True
+    #                                       )]
 
     def parse(self, response):
         print "parse: " + response.url
+        code = response.xpath("//div[@class='mc-body']/form[@id='regfrm']//td[3]/a/span[@id='courseCode_125725']/text()").extract()[0]
+        print code
+        curriculum_code = response.xpath(
+            "//div[@class='mc-body']/form[@id='regfrm']//td[3]/a/span[@id='courseCode_125725']/text()").extract()[0]
+        print curriculum_code
+        restrict = response.xpath("//div[@class='mc-body']/form[@id='regfrm']//td[7]/text()").extract()[0]
+        print restrict
+        students = response.xpath("//div[@class='mc-body']/form[@id='regfrm']//td[8]/text()").extract()[0]
+        print students
         print "succeed"
+
         # for sel in response.xpath('//ul/li'):
         #     item = CurriculumMonitorItem()
         #     item['title'] = sel.xpath('a/text()').extract()

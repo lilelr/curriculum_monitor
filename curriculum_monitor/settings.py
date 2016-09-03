@@ -14,6 +14,9 @@ BOT_NAME = 'curriculum_monitor'
 SPIDER_MODULES = ['curriculum_monitor.spiders']
 NEWSPIDER_MODULE = 'curriculum_monitor.spiders'
 
+LOG_FILE = 'curriculum_monitor.log'  # 日志文件名，应与项目名称相同
+LOG_LEVEL = 'INFO'  # 日志记录级别设为INFO
+LOG_STDOUT = True  # 日志输出到文件中
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'curriculum_monitor (+http://www.yourdomain.com)'
