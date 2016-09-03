@@ -62,8 +62,8 @@ class MonitorSpider(scrapy.Spider):
                                           headers=self.headers,  # 注意此处的headers
                                           formdata={
 
-                                              'userName': 'lilelr@163.com',
-                                              'pwd': '440921199306191617',
+                                              'userName': 'lilelr@163.com',  # 用户名
+                                              'pwd': '',  # 登录密码
                                               'sb': 'sb'
                                           },
                                           callback=self.after_login,
