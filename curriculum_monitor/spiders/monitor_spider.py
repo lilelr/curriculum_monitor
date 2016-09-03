@@ -6,6 +6,7 @@ import pymongo
 
 import scrapy
 from scrapy.http import Request, FormRequest
+import easygui
 import urllib
 import json
 import re
@@ -140,7 +141,10 @@ class MonitorSpider(scrapy.Spider):
         # 目前课程已选人数
         students = response.xpath("//div[@class='mc-body']/form[@id='regfrm']//tr[6]/td[8]/text()").extract()[0]
         print "number: " + students
-        print "succeed"
+        content = u"课程代码:"+curriculum_code+"\n" + u"课程名称:"+curriculum_name+"\n" \
+                  + u"课程选课限制人数:"+restrict+"\n" + u"目前课程已选人数: "+ students+"\n"
+        easygui.msgbox(content, 'curriculum_monitor')
+        # print "succeed"
 
         # for sel in response.xpath('//ul/li'):
         #     item = CurriculumMonitorItem()
