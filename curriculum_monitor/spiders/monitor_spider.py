@@ -30,7 +30,7 @@ class MonitorSpider(scrapy.Spider):
     start_urls = [
         "http://sep.ucas.ac.cn/appStore"
     ]
-    monitor_curriculum_code = "093M1002H-2"
+    monitor_curriculum_code = "093M1002H-2" # 需要监听的课程代码,请修改
 
     headers = {
         "Accept": "*/*",
@@ -62,8 +62,8 @@ class MonitorSpider(scrapy.Spider):
                                           headers=self.headers,  # 注意此处的headers
                                           formdata={
 
-                                              'userName': 'lilelr@163.com',  # 用户名
-                                              'pwd': '',  # 登录密码
+                                              'userName': 'lilelr@163.com',  # 用户名,,请修改
+                                              'pwd': '',  # 登录密码,,请修改
                                               'sb': 'sb'
                                           },
                                           callback=self.after_login,
@@ -75,9 +75,6 @@ class MonitorSpider(scrapy.Spider):
         # for url in self.start_urls:
         #     yield self.make_requests_from_url(url)
         yield scrapy.Request("http://sep.ucas.ac.cn/portal/site/226/821",
-                             cookies={"route": "7b8af2c81cb5eb409ef57d5bf81b68bd",
-                                      "JSESSIONID": "8197A6EB451D8DA5A6D980B269E64B76",
-                                      'sepuser': '"bWlkPWY3ZWZjMjcyLTlhNmYtNDIxYS1iMTcyLTVjZTcwZjExNmZlZQ==  "'},
                              headers=self.headers,
                              callback=self.curriculum_login,
                              dont_filter=True
@@ -87,9 +84,6 @@ class MonitorSpider(scrapy.Spider):
         print "curriculum_login: " + response.url
         # print response.meta['cookiejar']
         yield scrapy.Request("http://jwxk.ucas.ac.cn/main",
-                             cookies={"route": "f2d8d1de88977d5fe77bd9efd18bb851",
-                                      "JSESSIONID": "119971F28FE1B8AB9794285A7AF4C5B2	",
-                                      'sepuser': '"bWlkPWM4MGYwMDliLWI2ODAtNDZkYi05ZTIzLWQ5N2NjZGE1N2NiMw==  "'},
                              # meta={'cookiejar': response.meta['cookiejar']},
                              headers=self.headers,
                              callback=self.curriculum_home,
@@ -103,8 +97,8 @@ class MonitorSpider(scrapy.Spider):
         # print "succeed"
         # get 请求
         yield scrapy.Request("http://jwxk.ucas.ac.cn/courseManage/main",
-                             cookies={"route": "f2d8d1de88977d5fe77bd9efd18bb851",
-                                      "JSESSIONID": "119971F28FE1B8AB9794285A7AF4C5B2	",
+                             cookies={"route": "166b1aa4055a32c5ebc743216c668982",
+                                      "JSESSIONID": "8C45F2B97E2EFABE55626875CB93D8D2	",
                                       'sepuser': '"bWlkPWM4MGYwMDliLWI2ODAtNDZkYi05ZTIzLWQ5N2NjZGE1N2NiMw==  "'},
                              # meta={'cookiejar': response.meta['cookiejar']},
                              headers=self.headers,
@@ -115,7 +109,7 @@ class MonitorSpider(scrapy.Spider):
     def course_manage_main_request(self, response):
         print "course_manage_main_request: " + response.url
         return [
-            FormRequest(url="http://jwxk.ucas.ac.cn/courseManage/selectCourse?s=db78aea7-0dd7-481e-a58a-9d4213085ca7",
+            FormRequest(url="http://jwxk.ucas.ac.cn/courseManage/selectCourse?s=9e8597af-8b5a-4b30-9b41-cbbcf331b70c",
                         headers=self.headers,  # 注意此处的headers
                         formdata={
                             'deptIds': '951',
