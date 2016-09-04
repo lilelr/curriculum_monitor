@@ -14,7 +14,9 @@ scrapy 应用
 
 ![](http://7xtc7i.com1.z0.glb.clouddn.com/Snip20160904_3.png)
 
-5. 点击底部浏览器监控界面中的 ”网络”（Network）菜单按钮，从左侧请求资源列表中找第一个请求名 “selectCourse?...”,点击它，复制右侧出现的 Request URL值 替换monitor_spider.py中 112 行 url 的值。
+5. 点击底部浏览器监控界面中的 ”网络”（Network）菜单按钮，从左侧请求资源列表中找第一个请求名 “selectCourse?...”,点击它，复制右侧出现的 Request URL值 替换monitor_spider.py中 112 行 url 的值,如下图。
+
+ ![](http://7xtc7i.com1.z0.glb.clouddn.com/Snip20160904_4.png)
 
 6. 打开一个任意终端 ，输入”scrapy crawl monitor“ 即可实现一次监听。
    运行curriculum_monitor/monitor.sh脚本， 即执行 ”sh monitor.sh"即可实现每隔5分钟监听一次。监听间隔可修改monitor.sh 脚本中的一个数字，单位为秒。
