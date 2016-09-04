@@ -12,7 +12,7 @@ import urllib
 import json
 import re
 
-from curriculum_monitor.items import CurriculumMonitorItem
+
 
 
 def format_words(buf, param=0):
